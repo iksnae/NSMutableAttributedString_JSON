@@ -5,6 +5,19 @@ Category on NSMutableAttributedString that enables initialization with JSON obje
 
 Compatible JSON can be generated with node.js module: [json-attributed-string](https://github.com/iksnae/json-attributed-string)
 
+Supported Attributes:
+```objective-c
+NSFontAttributeName
+NSParagraphStyleAttributeName
+NSForegroundColorAttributeName
+NSBackgroundColorAttributeName
+NSLigatureAttributeName
+NSStrokeColorAttributeName
+NSStrokeWidthAttributeName
+NSShadowAttributeName
+NSAttachmentAttributeName
+NSLinkAttribute
+```
 
 Usage
 --------------
