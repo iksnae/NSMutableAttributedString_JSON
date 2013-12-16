@@ -22,6 +22,8 @@
 		E903DA88185EB3B10081988D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E903DA67185EB3B10081988D /* UIKit.framework */; };
 		E903DA90185EB3B10081988D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E903DA8E185EB3B10081988D /* InfoPlist.strings */; };
 		E903DA92185EB3B10081988D /* NSMutableAttributedString_JSONTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E903DA91185EB3B10081988D /* NSMutableAttributedString_JSONTests.m */; };
+		E903DA9E185EB4B90081988D /* example.json in Resources */ = {isa = PBXBuildFile; fileRef = E903DA9B185EB4B90081988D /* example.json */; };
+		E903DA9F185EB4B90081988D /* NSMutableAttributedString+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = E903DA9D185EB4B90081988D /* NSMutableAttributedString+JSON.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,9 @@
 		E903DA8D185EB3B10081988D /* NSMutableAttributedString_JSONTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NSMutableAttributedString_JSONTests-Info.plist"; sourceTree = "<group>"; };
 		E903DA8F185EB3B10081988D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E903DA91185EB3B10081988D /* NSMutableAttributedString_JSONTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSMutableAttributedString_JSONTests.m; sourceTree = "<group>"; };
+		E903DA9B185EB4B90081988D /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
+		E903DA9C185EB4B90081988D /* NSMutableAttributedString+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableAttributedString+JSON.h"; sourceTree = "<group>"; };
+		E903DA9D185EB4B90081988D /* NSMutableAttributedString+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+JSON.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +125,9 @@
 				E903DA78185EB3B10081988D /* Main_iPad.storyboard */,
 				E903DA7B185EB3B10081988D /* ViewController.h */,
 				E903DA7C185EB3B10081988D /* ViewController.m */,
+				E903DA9B185EB4B90081988D /* example.json */,
+				E903DA9C185EB4B90081988D /* NSMutableAttributedString+JSON.h */,
+				E903DA9D185EB4B90081988D /* NSMutableAttributedString+JSON.m */,
 				E903DA7E185EB3B10081988D /* Images.xcassets */,
 				E903DA6A185EB3B10081988D /* Supporting Files */,
 			);
@@ -232,6 +240,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E903DA7A185EB3B10081988D /* Main_iPad.storyboard in Resources */,
+				E903DA9E185EB4B90081988D /* example.json in Resources */,
 				E903DA7F185EB3B10081988D /* Images.xcassets in Resources */,
 				E903DA77185EB3B10081988D /* Main_iPhone.storyboard in Resources */,
 				E903DA6E185EB3B10081988D /* InfoPlist.strings in Resources */,
@@ -253,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E903DA9F185EB4B90081988D /* NSMutableAttributedString+JSON.m in Sources */,
 				E903DA7D185EB3B10081988D /* ViewController.m in Sources */,
 				E903DA74185EB3B10081988D /* AppDelegate.m in Sources */,
 				E903DA70185EB3B10081988D /* main.m in Sources */,
