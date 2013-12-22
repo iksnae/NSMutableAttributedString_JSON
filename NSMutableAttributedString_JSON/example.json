@@ -1,29 +1,29 @@
 {
-    "text": "The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz.The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz. The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz.The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz. The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz.The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz. The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz.The quick brown fox jumps over the lazy dog. Wafting zephyrs quickly vexed Jumbo. Jackdaws love my big sphinx of quartz.",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fermentum leo vitae pharetra semper. Duis eget ullamcorper leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fermentum leo vitae pharetra semper. Duis eget ullamcorper leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fermentum leo vitae pharetra semper. Duis eget ullamcorper leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fermentum leo vitae pharetra semper. Duis eget ullamcorper leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fermentum leo vitae pharetra semper. Duis eget ullamcorper leo. ",
     "attributes": [
                    {
                    "name": "Font",
                    "value": 0,
                    "range": {
-                   "startIndex": 0,
-                   "length": 481.5
+                   "startLocation": 0,
+                   "length": 312.5
                    },
-                   "fontName": "Arial",
+                   "fontName": "Helvetica",
                    "fontSize": 30
                    },
                    {
                    "name": "ForegroundColor",
-                   "value": "0xff0000",
+                   "value": "0xffcc00",
                    "range": {
-                   "startIndex": 10,
+                   "startLocation": 10,
                    "length": 10
                    }
                    },
                    {
                    "name": "BackgroundColor",
-                   "value": "0x00ff00",
+                   "value": "0xff0000",
                    "range": {
-                   "startIndex": 5,
+                   "startLocation": 5,
                    "length": 25
                    }
                    },
@@ -31,10 +31,10 @@
                    "name": "ParagraphStyle",
                    "value": "Custom",
                    "range": {
-                   "startIndex": 0,
-                   "length": 963
+                   "startLocation": 0,
+                   "length": 625
                    },
-                   "alignment": "Right",
+                   "alignment": 0,
                    "firstLineHeadIndent": 0,
                    "headIndent": 0,
                    "tailIndent": 0,
@@ -48,25 +48,15 @@
                    "name": "Link",
                    "value": "http://google.com",
                    "range": {
-                   "startIndex": 50,
+                   "startLocation": 50,
                    "length": 16
                    }
-                   },
-                   {
-                   "name": "Font",
-                   "value": 0,
-                   "range": {
-                   "startIndex": 50,
-                   "length": 16
-                   },
-                   "fontName": "Arial",
-                   "fontSize": 10
                    },
                    {
                    "name": "Shadow",
                    "value": "Custom",
                    "range": {
-                   "startIndex": 80,
+                   "startLocation": 80,
                    "length": 20
                    },
                    "color": "0x000000",
@@ -79,15 +69,15 @@
                    "name": "StrokeColor",
                    "value": "0xff0000",
                    "range": {
-                   "startIndex": 100,
+                   "startLocation": 100,
                    "length": 10
                    }
                    },
                    {
                    "name": "StrokeWidth",
-                   "value": 2,
+                   "value": 1,
                    "range": {
-                   "startIndex": 100,
+                   "startLocation": 100,
                    "length": 10
                    }
                    },
@@ -95,15 +85,23 @@
                    "name": "Ligature",
                    "value": 1,
                    "range": {
-                   "startIndex": 0,
-                   "length": 481.5
+                   "startLocation": 0,
+                   "length": 312.5
                    }
                    },
                    {
                    "name": "Attachment",
                    "value": "http://www.scientificamerican.com/media/inline/steve-jobs-legacy_1_thumb.jpg",
                    "range": {
-                   "startIndex": 4,
+                   "startLocation": 0,
+                   "length": 10
+                   }
+                   },
+                   {
+                   "name": "UnderlineStyle",
+                   "value": 0,
+                   "range": {
+                   "startLocation": 4,
                    "length": 0
                    }
                    }

@@ -24,17 +24,21 @@
     NSData * jsonData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"example" ofType:@"json"]];
     NSDictionary * jsonDict = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
     NSMutableAttributedString * attString = [[NSMutableAttributedString alloc]initWithJSONDictionary:jsonDict];
-    [self.textView setFont:[UIFont italicSystemFontOfSize:36]];
+//    [self.textView setFont:[UIFont italicSystemFontOfSize:36]];
     [self.textView setAttributedText:[attString mutableCopy]];
     
     NSDictionary * dict = [attString JSONDictionary];
     NSLog(@"out: %@",dict);
+    
+    
+    NSMutableAttributedString * attString2 = [[NSMutableAttributedString alloc]initWithJSONDictionary:dict];
+//    [self.textView setFont:[UIFont italicSystemFontOfSize:36]];
+    [self.textView setAttributedText:[attString2 mutableCopy]];
+    
+    
+    
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+
 
 @end

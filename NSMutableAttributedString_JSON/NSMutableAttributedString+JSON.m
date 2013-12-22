@@ -45,7 +45,9 @@ static char ATTACHMENT_URL_KEY;
     NSArray * attributes = [jsonDict valueForKey:@"attributes"];
     NSMutableAttributedString * attStr = [[NSMutableAttributedString alloc]initWithString:text];
     for (NSDictionary * attrDict in attributes) {
-        [attStr addAttributeWithJSONDictionary:attrDict];
+       
+            [attStr addAttributeWithJSONDictionary:attrDict];
+        
     }
     return attStr;
 }
@@ -54,9 +56,9 @@ static char ATTACHMENT_URL_KEY;
 - (void)addAttributeWithJSONDictionary:(NSDictionary *)jsonDict
 {
     NSString * attributeName = [jsonDict valueForKey:@"name"];
-    NSInteger rangeStartIndex = [[[jsonDict valueForKey:@"range"] valueForKey:@"startIndex"]integerValue];
-    NSInteger rangeLength = [[[jsonDict valueForKey:@"range"] valueForKey:@"length"] integerValue];
-    NSRange range = NSMakeRange(rangeStartIndex, rangeLength);
+    NSInteger rangeStartLocation = [[[jsonDict objectForKey:@"range"] valueForKey:@"startLocation"]integerValue];
+    NSInteger rangeLength = [[[jsonDict objectForKey:@"range"] valueForKey:@"length"] integerValue];
+    NSRange range = NSMakeRange(rangeStartLocation, rangeLength);
     
     
     if ([attributeName isEqualToString:@"Font"])
@@ -82,7 +84,7 @@ static char ATTACHMENT_URL_KEY;
     {
         // ParagraphStyle
         NSMutableParagraphStyle * pstyle = [[NSMutableParagraphStyle alloc]init];
-        [pstyle setAlignment:[self alignmentForString:[jsonDict valueForKey:@"alignment"]]];
+        [pstyle setAlignment:[[jsonDict valueForKey:@"alignment"] integerValue]];
         [pstyle setFirstLineHeadIndent:[[jsonDict valueForKey:@"firstLineHeadIndent"] floatValue]];
         [pstyle setHeadIndent:[[jsonDict valueForKey:@"headIndent"] floatValue]];
         [pstyle setLineHeightMultiple:[[jsonDict valueForKey:@"lineHeightMultiple"] floatValue]];
@@ -97,7 +99,10 @@ static char ATTACHMENT_URL_KEY;
     else if ([attributeName isEqualToString:@"Link"])
     {
         // Link
-        [self addAttribute:NSLinkAttributeName value:[NSURL URLWithString:[jsonDict valueForKey:@"value"]] range:range];
+//        NSString * str = [jsonDict valueForKey:@"value"];
+        NSString * url = [jsonDict valueForKey:@"value"];
+        
+        [self addAttribute:NSLinkAttributeName value:url range:range];
     }
     else if ([attributeName isEqualToString:@"Shadow"])
     {
@@ -131,15 +136,14 @@ static char ATTACHMENT_URL_KEY;
     {
         // Attachment
         NSURL * url =[NSURL URLWithString:[jsonDict valueForKey:@"value"]];
-        UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+        NSData * imgData = [NSData dataWithContentsOfURL:url];
+        UIImage *image = [UIImage imageWithData:imgData];
      
         NSTextAttachment *attachment = [[NSTextAttachment alloc]init];
         [attachment setURL:url];
         [attachment setImage:image];
         [self insertAttributedString:[NSAttributedString attributedStringWithAttachment:attachment] atIndex:range.location];
     }
-    
-    
 }
 
 
@@ -185,6 +189,9 @@ static char ATTACHMENT_URL_KEY;
                                  NSStrokeWidthAttributeName,
                                  NSShadowAttributeName,
                                  NSAttachmentAttributeName];
+    
+    
+    [dict setValue:self.string forKey:@"text"];
     
     for (NSString* attributeName in attributeNames) {
        
@@ -330,7 +337,9 @@ static char ATTACHMENT_URL_KEY;
     
     [*attributes addObject:@{
                              @"name":@"Shadow",
-                             @"offset": NSStringFromCGSize(attrib.shadowOffset),
+                             @"offset":@{@"x": @(attrib.shadowOffset.width),
+                                         @"y": @(attrib.shadowOffset.height)
+                                         },
                              @"color": [attrib.shadowColor hexString],
                              @"shadowBlurRadius": @(attrib.shadowBlurRadius),
                              
@@ -346,7 +355,7 @@ static char ATTACHMENT_URL_KEY;
     
     [*attributes addObject:@{
                              @"name":@"Attachment",
-                             @"value":attrib.url,
+                             @"value":[attrib.url description],
                              @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
                              }];
 }
