@@ -7,27 +7,32 @@
 //
 
 #import "NSMutableAttributedString+JSON.h"
+#import <objc/runtime.h>
 
+static char ATTACHMENT_URL_KEY;
 
-@interface UIColor (HexString)
-+ (UIColor *) colorFromHexString:(NSString *)hexString;
+@interface NSTextAttachment (JSON)
+- (NSURL*)url;
+- (void)setURL:(NSURL*)url;
 @end
 
-@implementation UIColor (HexString)
 
-+ (UIColor *) colorFromHexString:(NSString *)hexString
+@implementation NSTextAttachment (JSON)
+
+- (NSURL *)url
 {
-    unsigned rgbValue = 0;
-    hexString = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
-    hexString = [hexString stringByReplacingOccurrencesOfString:@"0x" withString:@""];
-    NSScanner *scanner = [NSScanner scannerWithString:hexString];
-    [scanner setScanLocation:0];
-    [scanner scanHexInt:&rgbValue];
-    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+    NSURL * attachmentUrl = objc_getAssociatedObject(self, &ATTACHMENT_URL_KEY);
+    return attachmentUrl;
+}
+
+- (void)setURL:(NSURL *)url
+{
+    [self willChangeValueForKey:@"url"];
+    objc_setAssociatedObject(self, &ATTACHMENT_URL_KEY, url, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    [self didChangeValueForKey:@"url"];
 }
 
 @end
-
 
 
 @implementation NSMutableAttributedString (JSON)
@@ -57,8 +62,8 @@
     if ([attributeName isEqualToString:@"Font"])
     {
         // Font
-        NSString * fontName = [jsonDict valueForKey:@"value"];
-        CGFloat fontSize = [[jsonDict valueForKey:@"size"] floatValue];
+        NSString * fontName = [jsonDict valueForKey:@"fontName"];
+        CGFloat fontSize = [[jsonDict valueForKey:@"fontSize"] floatValue];
         [self addAttribute:NSFontAttributeName value:[UIFont fontWithName:fontName size:fontSize] range:range];
     }
     else if ([attributeName isEqualToString:@"ForegroundColor"])
@@ -100,7 +105,7 @@
         
         CGFloat x = [[[jsonDict valueForKey:@"offset"] valueForKey:@"x"] floatValue];
         CGFloat y = [[[jsonDict valueForKey:@"offset"] valueForKey:@"y"] floatValue];
-        UIColor * color = [UIColor colorFromHexString:[[jsonDict valueForKey:@"range"] valueForKey:@"color"]];
+        UIColor * color = [UIColor colorFromHexString:[jsonDict valueForKey:@"color"]];
         NSShadow * shadow = [[NSShadow alloc]init];
         [shadow setShadowBlurRadius:2];
         [shadow setShadowOffset:CGSizeMake(x, y)];
@@ -127,7 +132,9 @@
         // Attachment
         NSURL * url =[NSURL URLWithString:[jsonDict valueForKey:@"value"]];
         UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+     
         NSTextAttachment *attachment = [[NSTextAttachment alloc]init];
+        [attachment setURL:url];
         [attachment setImage:image];
         [self insertAttributedString:[NSAttributedString attributedStringWithAttachment:attachment] atIndex:range.location];
     }
@@ -160,7 +167,241 @@
     else{
         return NSTextAlignmentLeft;
     }
-    
 }
+
+- (NSDictionary*)JSONDictionary
+{
+    __block NSMutableDictionary * dict = [NSMutableDictionary dictionary];
+    __block NSMutableArray * attributes = [NSMutableArray array];
+    __block NSInteger i = 0;
+    
+    NSArray * attributeNames = @[NSParagraphStyleAttributeName,
+                                 NSFontAttributeName,
+                                 NSForegroundColorAttributeName,
+                                 NSBackgroundColorAttributeName,
+                                 NSLigatureAttributeName,
+                                 NSLinkAttributeName,
+                                 NSStrokeColorAttributeName,
+                                 NSStrokeWidthAttributeName,
+                                 NSShadowAttributeName,
+                                 NSAttachmentAttributeName];
+    
+    for (NSString* attributeName in attributeNames) {
+       
+        NSLog(@"Attribute: %@\n",attributeName);
+        [self enumerateAttribute:attributeName inRange:NSMakeRange(0, self.string.length)  options:NSAttributedStringEnumerationReverse usingBlock:^(id value, NSRange range, BOOL *stop) {
+            //
+            
+            if (value) {
+                if ([attributeName isEqualToString:NSParagraphStyleAttributeName]) {
+                    // paragraph style
+                    [self addParagraphStyleAttribute:value toAttributes:&attributes withRange:range];
+                }
+                if ([attributeName isEqualToString:NSFontAttributeName]) {
+                    // font
+                    [self addFontAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                if ([attributeName isEqualToString:NSForegroundColorAttributeName]) {
+                    // foreground color
+                    [self addForegroundColorAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                if ([attributeName isEqualToString:NSBackgroundColorAttributeName]) {
+                    // background color
+                    [self addBackgroundColorAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                if ([attributeName isEqualToString:NSLigatureAttributeName]) {
+                    // ligature
+                    [self addLigatureAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                if ([attributeName isEqualToString:NSLinkAttributeName]) {
+                    // link
+                    [self addLinkAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                
+                if ([attributeName isEqualToString:NSStrokeColorAttributeName]) {
+                    // stroke color
+                    [self addStrokeColorAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                
+                if ([attributeName isEqualToString:NSStrokeWidthAttributeName]) {
+                    // stroke width
+                    [self addStrokeWidthAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                
+                if ([attributeName isEqualToString:NSShadowAttributeName]) {
+                    // shadow
+                    [self addShadowAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                
+                if ([attributeName isEqualToString:NSAttachmentAttributeName]) {
+                    // attachment
+                    [self addAttachmentAttributeName:value toAttributes:&attributes withRange:range];
+                }
+                
+                i++;
+            }
+        }];
+    }
+    NSLog(@"total: %d",i);
+    [dict setValue:attributes forKey:@"attributes"];
+    return dict.mutableCopy;
+}
+
+- (void)addFontAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    NSString *name = NSStringFromClass([attrib class]);
+    if([name isEqualToString:@"UICTFont"])
+    {
+        UIFontDescriptor * desc = [attrib fontDescriptor];
+       
+        [*attributes addObject:@{
+                                 @"name":@"Font",
+                                 @"fontName" : [desc.fontAttributes valueForKey:@"NSFontNameAttribute"],
+                                 @"fontSize" : [desc.fontAttributes valueForKey:@"NSFontSizeAttribute"],
+                                 @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                                 }];
+    }
+}
+
+- (void)addForegroundColorAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    
+    UIColor * color = (UIColor*)attrib;
+    [*attributes addObject:@{
+                             @"name":@"ForegroundColor",
+                             @"value":[color hexString],
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+- (void)addBackgroundColorAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    UIColor * color = (UIColor*)attrib;
+    [*attributes addObject:@{
+                             @"name":@"BackgroundColor",
+                             @"value":[color hexString],
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+
+- (void)addLigatureAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    
+    [*attributes addObject:@{
+                             @"name":@"Ligature",
+                             @"value":attrib,
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+- (void)addLinkAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    
+    [*attributes addObject:@{
+                             @"name":@"Link",
+                             @"value":attrib,
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+- (void)addStrokeColorAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    UIColor * color = (UIColor*)attrib;
+    [*attributes addObject:@{
+                             @"name":@"StrokeColor",
+                             @"value":[color hexString],
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+- (void)addStrokeWidthAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    
+    [*attributes addObject:@{
+                             @"name":@"StrokeWidth",
+                             @"value":attrib,
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+- (void)addShadowAttributeName:(NSShadow*)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    
+    [*attributes addObject:@{
+                             @"name":@"Shadow",
+                             @"offset": NSStringFromCGSize(attrib.shadowOffset),
+                             @"color": [attrib.shadowColor hexString],
+                             @"shadowBlurRadius": @(attrib.shadowBlurRadius),
+                             
+                             
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+
+- (void)addAttachmentAttributeName:(NSTextAttachment*)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+    NSLog(@"url: %@",attrib.url);
+    
+    [*attributes addObject:@{
+                             @"name":@"Attachment",
+                             @"value":attrib.url,
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+- (void)addParagraphStyleAttribute:(NSMutableParagraphStyle*)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
+{
+   
+    
+    [*attributes addObject:@{
+                             @"name":@"ParagraphStyle",
+                             @"alignment": @(attrib.alignment),
+                             @"firstLineHeadIndent": @(attrib.firstLineHeadIndent),
+                             @"headIndent": @(attrib.headIndent),
+                             @"lineHeightMultiple": @(attrib.lineHeightMultiple),
+                             @"maximumLineHeight": @(attrib.maximumLineHeight),
+                             @"minimumLineHeight": @(attrib.minimumLineHeight),
+                             @"tailIndent": @(attrib.tailIndent),
+                             @"paragraphSpacing": @(attrib.paragraphSpacing),
+                             @"paragraphSpacingBefore": @(attrib.paragraphSpacingBefore),
+                             @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
+                             }];
+}
+
+@end
+
+
+
+
+
+@implementation UIColor (HexString)
+
++ (UIColor *) colorFromHexString:(NSString *)hexString
+{
+    unsigned rgbValue = 0;
+    hexString = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
+    hexString = [hexString stringByReplacingOccurrencesOfString:@"0x" withString:@""];
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:0];
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+}
+
+
+
+- (NSString*)hexString
+{
+    const CGFloat *components = CGColorGetComponents(self.CGColor);
+    
+    CGFloat red, green, blue;
+    red = roundf(components[0] * 255.0);
+    green = roundf(components[1] * 255.0);
+    blue = roundf(components[2] * 255.0);
+    
+    return [[NSString alloc]initWithFormat:@"0x%02x%02x%02x", (int)red, (int)green, (int)blue];
+}
+
 
 @end

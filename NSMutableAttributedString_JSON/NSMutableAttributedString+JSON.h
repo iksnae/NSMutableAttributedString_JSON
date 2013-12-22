@@ -10,5 +10,12 @@
 
 @interface NSMutableAttributedString (JSON)
 - (id)initWithJSONDictionary:(NSDictionary *)jsonDict;
-- (void)addAttributeWithJSONDictionary:(NSDictionary *)jsonDict;
+- (NSDictionary*)JSONDictionary;
+@end
+
+
+
+@interface UIColor (HexString)
++ (UIColor *)colorFromHexString:(NSString *)hexString;
+- (NSString*)hexString;
 @end
