@@ -9,6 +9,7 @@
 #import "NSMutableAttributedString+JSON.h"
 #import <objc/runtime.h>
 
+// category on NSTextAttachment to allow saving of URL
 static char ATTACHMENT_URL_KEY;
 
 @interface NSTextAttachment (JSON)
@@ -16,27 +17,22 @@ static char ATTACHMENT_URL_KEY;
 - (void)setURL:(NSURL*)url;
 @end
 
-
 @implementation NSTextAttachment (JSON)
-
 - (NSURL *)url
 {
     NSURL * attachmentUrl = objc_getAssociatedObject(self, &ATTACHMENT_URL_KEY);
     return attachmentUrl;
 }
-
 - (void)setURL:(NSURL *)url
 {
     [self willChangeValueForKey:@"url"];
     objc_setAssociatedObject(self, &ATTACHMENT_URL_KEY, url, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [self didChangeValueForKey:@"url"];
 }
-
 @end
 
 
 @implementation NSMutableAttributedString (JSON)
-
 
 
 - (id)initWithJSONDictionary:(NSDictionary *)jsonDict
@@ -99,7 +95,6 @@ static char ATTACHMENT_URL_KEY;
     else if ([attributeName isEqualToString:@"Link"])
     {
         // Link
-//        NSString * str = [jsonDict valueForKey:@"value"];
         NSString * url = [jsonDict valueForKey:@"value"];
         
         [self addAttribute:NSLinkAttributeName value:url range:range];
@@ -107,7 +102,6 @@ static char ATTACHMENT_URL_KEY;
     else if ([attributeName isEqualToString:@"Shadow"])
     {
         // Shadow
-        
         CGFloat x = [[[jsonDict valueForKey:@"offset"] valueForKey:@"x"] floatValue];
         CGFloat y = [[[jsonDict valueForKey:@"offset"] valueForKey:@"y"] floatValue];
         UIColor * color = [UIColor colorFromHexString:[jsonDict valueForKey:@"color"]];
@@ -146,32 +140,6 @@ static char ATTACHMENT_URL_KEY;
     }
 }
 
-
-- (NSTextAlignment)alignmentForString:(NSString*)alignmentString
-{
-    if ([alignmentString isEqualToString:@"Left"]) {
-        return NSTextAlignmentLeft;
-    }
-    else if([alignmentString isEqualToString:@"Right"])
-    {
-        return NSTextAlignmentRight;
-    }
-    else if([alignmentString isEqualToString:@"Center"])
-    {
-        return NSTextAlignmentCenter;
-    }
-    else if([alignmentString isEqualToString:@"Justified"])
-    {
-        return NSTextAlignmentJustified;
-    }
-    else if([alignmentString isEqualToString:@"Natural"])
-    {
-        return NSTextAlignmentNatural;
-    }
-    else{
-        return NSTextAlignmentLeft;
-    }
-}
 
 - (NSDictionary*)JSONDictionary
 {
@@ -254,6 +222,7 @@ static char ATTACHMENT_URL_KEY;
     return dict.mutableCopy;
 }
 
+
 - (void)addFontAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
     NSString *name = NSStringFromClass([attrib class]);
@@ -270,6 +239,7 @@ static char ATTACHMENT_URL_KEY;
     }
 }
 
+
 - (void)addForegroundColorAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
     
@@ -280,6 +250,7 @@ static char ATTACHMENT_URL_KEY;
                              @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
                              }];
 }
+
 
 - (void)addBackgroundColorAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
@@ -302,6 +273,7 @@ static char ATTACHMENT_URL_KEY;
                              }];
 }
 
+
 - (void)addLinkAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
     
@@ -311,6 +283,7 @@ static char ATTACHMENT_URL_KEY;
                              @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
                              }];
 }
+
 
 - (void)addStrokeColorAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
@@ -322,6 +295,7 @@ static char ATTACHMENT_URL_KEY;
                              }];
 }
 
+
 - (void)addStrokeWidthAttributeName:(id)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
     
@@ -331,6 +305,7 @@ static char ATTACHMENT_URL_KEY;
                              @"range": @{ @"startLocation":@(range.location), @"length":@(range.length)}
                              }];
 }
+
 
 - (void)addShadowAttributeName:(NSShadow*)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
@@ -360,6 +335,7 @@ static char ATTACHMENT_URL_KEY;
                              }];
 }
 
+
 - (void)addParagraphStyleAttribute:(NSMutableParagraphStyle*)attrib toAttributes:(NSMutableArray**)attributes withRange:(NSRange)range
 {
    
@@ -383,8 +359,7 @@ static char ATTACHMENT_URL_KEY;
 
 
 
-
-
+// Category on UIColor add hex string capabilities
 @implementation UIColor (HexString)
 
 + (UIColor *) colorFromHexString:(NSString *)hexString
