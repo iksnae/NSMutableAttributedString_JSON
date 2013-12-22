@@ -23,12 +23,25 @@ Usage
 --------------
 
 ```smartalk
+
+// import the category
 #import "NSMutableAttributedString+JSON.h"
+
+// create json-data object from file
 NSData * jsonData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"example" ofType:@"json"]];
+
+// create json-dictionary from data object
 NSDictionary * jsonDict = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
-NSLog(@"jsonDict: %@",jsonDict);
+
+// create attributed string with json-dictionary
 NSMutableAttributedString * attString = [[NSMutableAttributedString alloc]initWithJSONDictionary:jsonDict];
-[self.textView setAttributedText:[attString mutableCopy]];
+
+// create new json-dictionary from attributed string
+NSDictionary * outJsonDict = [attString JSONDict];
+
+// set attributed string on text view with generated json
+[self.textView setAttributedText:[outJsonDict mutableCopy]];
+
 ```
 
 
